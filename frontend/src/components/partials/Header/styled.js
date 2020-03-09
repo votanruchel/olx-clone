@@ -46,8 +46,12 @@ border-bottom: 1px solid #CCC;
         margin-left: 20px;
         margin-right: 20px;
 
-        a {
+        a,button {
             color: #000;
+            border: 0;
+            background: none;
+            cursor: pointer;
+            outline: 0;
             font-size: 14px;
             text-decoration: none;
 

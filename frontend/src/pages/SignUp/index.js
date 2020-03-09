@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { PageArea } from './styled';
 import useApi from '../../helpers/OlxAPI';
-//import { doLogin } from '../../helpers/AuthHandler';
+import { doLogin } from '../../helpers/AuthHandler';
 
 import { PageContainer, PageTitle, ErrorMessage } from '../../components/MainComponents';
 const Page = () => {
@@ -30,18 +30,23 @@ const Page = () => {
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setDisabled(true);
- /*
-        const json = await api.login(email, password)
+        setError('');
 
+        if(password !== confirmPassword){
+            setError('Senham nao conferem!');
+            setDisabled(false);
+            return;
+        }
+        const json = await api.register(name, email, password, stateLoc)
         if(json.error){
             setError(json.error);
         }else{
-            doLogin(json.token, rememberPassword);
+            doLogin(json.token);
             window.location.href = '/';
         }
         setDisabled(false);
-    }*/
-}
+    }
+
     return (
         <PageContainer>
             <PageTitle>Cadastro</PageTitle>
@@ -54,7 +59,7 @@ const Page = () => {
                         <div className="area--title">Nome Completo</div>
                         <div className="area--input">
                             <input
-                                type="email"
+                                type="text"
                                 disabled={disabled}
                                 value={name}
                                 onChange={e => setName(e.target.value)}

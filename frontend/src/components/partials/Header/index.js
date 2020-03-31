@@ -32,7 +32,7 @@ const Header = () =>{
                                 <button onClick={handleLogout}>Sair</button>
                             </li>
                             <li>
-                                <Link to="" className="button">Poste um anuncio</Link>
+                                <Link to="/post-an-ad" className="button">Poste um anuncio</Link>
                             </li>
                         </>
                         }

@@ -7,9 +7,11 @@ import { PageContainer } from '../../components/MainComponents';
 
 
 import AdItem from '../../components/partials/AdItem';
+let timer;
 const Page = () => {
     const api = useApi();
     const history = useHistory();
+   
     const useQueryString = () =>{
         return new URLSearchParams(useLocation().search);
     }
@@ -20,8 +22,39 @@ const Page = () => {
     const [cat, setCat] = useState(query.get('cat') != null ? query.get('cat') : '')
     const [state, setState] = useState(query.get('state') != null ? query.get('state') : '')
 
+
+    const [adsTotal, setAdsTotal] = useState(0);
     const [categories, setCategories] = useState([])
-    const [adList, setAdList] = useState([])
+    const [adList, setAdList] = useState([]);
+    const [pageCount, setPageCount] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const [resultOpacity, setResultOpacity] = useState(1);
+    const [loading, setLoading] = useState(true);
+   
+    const getAdsList = async () =>{
+        setLoading(true);
+        let offset = (currentPage - 1) * 2
+        const json = await api.getAds({
+            sort: 'desc',
+            limit: 9,
+            q,
+            cat,
+            state,
+            offset
+        });
+        setAdList(json.ads);
+        setAdsTotal(json.total);
+        setResultOpacity(1);
+        setLoading(false);
+    }
+    useEffect(()=>{
+        if(adList.length > 0){
+            setPageCount(Math.ceil(adsTotal / adList.length))
+        }else{
+            setPageCount(0);
+        }
+    },[adsTotal])
 
     useEffect(()=>{
         let queryString = [];
@@ -37,8 +70,20 @@ const Page = () => {
         history.replace({
             search:`?${queryString.join('&')}`
         })
+
+        if(timer){
+            clearTimeout(timer);
+        }
+        timer = setTimeout(getAdsList, 1300);
+        setResultOpacity(0.3);
+        setCurrentPage(1);
     }, [q,cat,state])
 
+
+    useEffect(()=>{
+        setResultOpacity(0.3);
+        getAdsList();
+    },[currentPage])
     useEffect(()=>{
         const getStates = async () =>{
             const slist = await api.getStates();
@@ -65,6 +110,11 @@ const Page = () => {
         }
         getRecentAds();
     }, [])
+
+    let pagination=[]
+    for(let i = 1;i < pageCount;i++){
+        pagination.push(i)
+    }
     return (
         <>
             <PageContainer>
@@ -108,7 +158,25 @@ const Page = () => {
                         </form>
                     </div>
                     <div className="rightSide">
+                        <h2>Resultados</h2>
 
+                            
+                        {loading && adList.length === 0 &&
+                            <div className="listWarning">Carregando</div>
+                        }
+                        {!loading && adList.length === 0 &&
+                            <div className="listWarning">Nenhum resultado :(</div>
+                        }
+
+                        <div className="list" style={{opacity: resultOpacity}}>
+                            {adList.map((i,k)=>
+                                <AdItem key={k} data={i}/>
+                            )}
+                        </div>
+                        <div className="pagination">
+                            {pagination.map((i,k)=>
+                            <div onClick={() => setCurrentPage(i)} className={i===currentPage?'pagItem active':'pagItem'}>{i}</div>)}
+                        </div>
                     </div>
                 </PageArea>
 

@@ -28,14 +28,19 @@ const Page = () => {
         setName(userInfo.name);
         setEmail(userInfo.email);
         setState(userInfo.state);
-
         setAds(userInfo.ads);
-
     }, [])
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setDisabled(true);
 
+        if(password === passwordConfirm && password !== '' && passwordConfirm !== ''){
+            const updatepass = await api.updateMe(password);
+            if(updatepass.error === ''){
+                alert("Senha alterada com sucesso!");
+            }
+        }
+        
         let errors = [];
 
         
@@ -72,9 +77,8 @@ const Page = () => {
                     <label className="area">
                         <div className="area--title">E-mail</div>
                         <div className="area--input">
-                            <MaskedInput 
-                            mask={priceMask}
-                            placeholder="R$ "
+                            <input
+                            type="text"
                             disabled={disabled}
                             value={email}
                             readOnly
@@ -97,13 +101,13 @@ const Page = () => {
                         <div className="area--title">Nova senha</div>
                         <div className="area--input">
                         <input 
-                            type="text"
+                            type="password"
                             disabled={disabled}
                             value={password}
                             onChange={e=>setPassword(e.target.value)}
                             />
                         <input 
-                            type="text"
+                            type="password"
                             disabled={disabled}
                             value={passwordConfirm}
                             onChange={e=>setPasswordConfirm(e.target.value)}

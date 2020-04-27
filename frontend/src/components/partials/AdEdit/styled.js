@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 
 export const Item = styled.div`
-a {
+
     display:block;
     border: 1px solid #fff;
     margin: 10px;
@@ -29,6 +29,5 @@ a {
     .itemViews{
         color: blue;
     }
-}
 
 `
